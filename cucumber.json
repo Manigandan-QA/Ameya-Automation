@@ -1,0 +1,44 @@
+{
+  "default": {
+    "requireModule": ["ts-node/register"],
+    "require": [],
+    "format": ["progress-bar"],
+    "formatOptions": { "snippetInterface": "async-await" }
+  },
+  "web": {
+    "requireModule": ["ts-node/register"],
+    "require": [
+      "src/hooks/global.hooks.ts",
+      "src/hooks/web.hooks.ts",
+      "src/step-definitions/web/**/*.ts",
+      "src/step-definitions/shared/**/*.ts"
+    ],
+    "paths": [
+      "src/features/web/**/*.feature",
+      "src/features/shared/**/*.feature"
+    ],
+    "format": [
+      "progress-bar",
+      "json:reports/cucumber-html/web-results.json"
+    ],
+    "formatOptions": { "snippetInterface": "async-await" }
+  },
+  "mobile": {
+    "requireModule": ["ts-node/register"],
+    "require": [
+      "src/hooks/global.hooks.ts",
+      "src/hooks/mobile.hooks.ts",
+      "src/step-definitions/mobile/**/*.ts",
+      "src/step-definitions/shared/**/*.ts"
+    ],
+    "paths": [
+      "src/features/mobile/**/*.feature",
+      "src/features/shared/**/*.feature"
+    ],
+    "format": [
+      "progress-bar",
+      "json:reports/cucumber-html/mobile-results.json"
+    ],
+    "formatOptions": { "snippetInterface": "async-await" }
+  }
+}

@@ -1,0 +1,98 @@
+pipeline {
+  agent any
+
+  parameters {
+    choice(name: 'ENV',      choices: ['qa', 'staging'],           description: 'Target environment')
+    choice(name: 'SUITE',    choices: ['P0', 'P1', 'P2'],          description: 'Test suite to run')
+    choice(name: 'PLATFORM', choices: ['both', 'web', 'mobile'],   description: 'Platform to test')
+  }
+
+  environment {
+    BROWSERSTACK_USERNAME   = credentials('browserstack-username')
+    BROWSERSTACK_ACCESS_KEY = credentials('browserstack-access-key')
+    TEST_USER_EMAIL         = credentials('test-user-email')
+    TEST_USER_PASSWORD      = credentials('test-user-password')
+    EXEC_MODE               = 'browserstack'
+    TEST_ENV                = "${params.ENV}"
+    CI                      = 'true'
+  }
+
+  stages {
+
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+        sh 'npx playwright install --with-deps chromium'
+      }
+    }
+
+    stage('Upload Android APK to BrowserStack') {
+      when {
+        expression { params.PLATFORM == 'both' || params.PLATFORM == 'mobile' }
+      }
+      steps {
+        script {
+          def response = sh(
+            script: '''
+              curl -s -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+                   -X POST "https://api-cloud.browserstack.com/app-automate/upload" \
+                   -F "file=@./builds/ameya-patient-portal.apk" \
+                   -F "custom_id=ameya-patient-portal-android"
+            ''',
+            returnStdout: true
+          ).trim()
+          def json = readJSON text: response
+          env.BROWSERSTACK_APP_URL = json.app_url
+          echo "App uploaded: ${env.BROWSERSTACK_APP_URL}"
+        }
+      }
+    }
+
+    stage('Run Tests') {
+      parallel {
+
+        stage('Web Suite') {
+          when {
+            expression { params.PLATFORM == 'both' || params.PLATFORM == 'web' }
+          }
+          steps {
+            sh "npx cucumber-js --profile web --tags '@${params.SUITE} and @web'"
+          }
+        }
+
+        stage('Mobile Suite') {
+          when {
+            expression { params.PLATFORM == 'both' || params.PLATFORM == 'mobile' }
+          }
+          steps {
+            sh "npx cucumber-js --profile mobile --tags '@${params.SUITE} and @mobile'"
+          }
+        }
+
+      }
+    }
+
+    stage('Generate Report') {
+      steps {
+        sh 'node scripts/generate-report.js'
+      }
+    }
+
+  }
+
+  post {
+    always {
+      cucumber fileIncludePattern: 'reports/cucumber-html/*.json'
+      publishHTML(target: [
+        reportDir:   'reports/html',
+        reportFiles: 'index.html',
+        reportName:  'Cucumber HTML Report',
+        keepAll:     true
+      ])
+      archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
+    }
+    failure {
+      echo 'Pipeline failed — review BrowserStack session recordings for details.'
+    }
+  }
+}

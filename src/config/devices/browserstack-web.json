@@ -1,0 +1,8 @@
+{
+  "browser": "chrome",
+  "browser_version": "latest",
+  "os": "Windows",
+  "os_version": "11",
+  "name": "Ameya Patient Portal — Web",
+  "build": "ameya-web-${BUILD_NUMBER}"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "platformName": "Android",
+    "deviceName": "Samsung Galaxy S24",
+    "osVersion": "14.0",
+    "build": "ameya-android-phone-${BUILD_NUMBER}"
+  },
+  {
+    "platformName": "Android",
+    "deviceName": "Samsung Galaxy Tab S9",
+    "osVersion": "14.0",
+    "build": "ameya-android-tablet-${BUILD_NUMBER}"
+  },
+  {
+    "platformName": "iOS",
+    "deviceName": "iPhone 15",
+    "osVersion": "17",
+    "build": "ameya-ios-phone-${BUILD_NUMBER}"
+  },
+  {
+    "platformName": "iOS",
+    "deviceName": "iPad Pro 12.9 2022",
+    "osVersion": "17",
+    "build": "ameya-ios-tablet-${BUILD_NUMBER}"
+  }
+]

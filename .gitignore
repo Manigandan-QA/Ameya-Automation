@@ -1,0 +1,12 @@
+node_modules/
+src/test-data/auth/session.json
+dist/
+.env
+reports/cucumber-html/*.json
+reports/allure-results/
+reports/allure-report/
+reports/html/
+reports/screenshots/
+builds/
+*.log
+.DS_Store

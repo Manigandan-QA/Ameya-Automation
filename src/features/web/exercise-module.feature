@@ -5,8 +5,9 @@ Feature: Weekly Activities
     Given the patient is logged in
 
   @smoke
-  Scenario: This Week's Activities are visible on the Home screen
+  Scenario: Home screen loads with weekly activities after login
     Then the weekly activities section is visible
+    And the guide contains today's recommended activities
     And at least one activity card is displayed
 
   Scenario: Patient can open an activity

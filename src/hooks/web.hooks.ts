@@ -4,6 +4,7 @@ import { CustomWorld } from '../worlds/CustomWorld';
 import { logger } from '../utils/Logger';
 
 Before({ tags: '@web' }, async function (this: CustomWorld) {
+  logger.info('>>> BROWSER OPEN');
   const { browser, context } = await WebDriverFactory.create();
   this.browser = browser;
   this.context = context;
@@ -26,4 +27,5 @@ After({ tags: '@web' }, async function (this: CustomWorld, scenario) {
   }
   await this.context?.close();
   await this.browser?.close();
+  logger.info('<<< BROWSER CLOSED');
 });

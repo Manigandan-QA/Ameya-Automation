@@ -4,7 +4,6 @@ Feature: Home Screen and Daily Guide
   Background:
     Given the patient is logged in
 
-  @smoke
   Scenario: Daily guide is visible on the Home screen
     Then the daily guide section is visible
     And the guide contains today's recommended activities
